@@ -1,0 +1,1466 @@
+-- leaked by 8kilos LOL
+
+local players = game:GetService("Players")
+local runService = game:GetService("RunService")
+local userInputService = game:GetService("UserInputService")
+local lighting = game:GetService("Lighting")
+local coreGui = game:GetService("CoreGui")
+local tweenService = game:GetService("TweenService")
+local localPlayer = players.LocalPlayer
+local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+character:WaitForChild("Humanoid")
+character:WaitForChild("HumanoidRootPart")
+local v1 = {
+    CurrentMode = "None",
+    Radius = 160,
+    RotationSpeed = 6,
+    Spread = 1,
+    MaxParts = 200,
+    VerticalOffset = 0,
+    Responsiveness = 500,
+    OwnershipVelocity = Vector3.new(14.47, 14.47, 14.47)
+}
+local function f1(text)
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.ResetOnSpawn = false
+    screenGui.DisplayOrder = 99999
+    pcall(
+        function()
+            screenGui.Parent = coreGui
+        end
+    )
+    if not screenGui.Parent then
+        screenGui.Parent = localPlayer:WaitForChild("PlayerGui")
+    end
+    local instance = Instance.new("Frame", screenGui)
+    instance.Size = UDim2.new(0, 280, 0, 40)
+    instance.Position = UDim2.new(0.5, -140, 0, 60)
+    instance.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    instance.BorderSizePixel = 0
+    Instance.new("UICorner", instance).CornerRadius = UDim.new(0, 8)
+    local instance2 = Instance.new("TextLabel", instance)
+    instance2.Size = UDim2.new(1, 0, 1, 0)
+    instance2.BackgroundTransparency = 1
+    instance2.Text = text
+    instance2.TextColor3 = Color3.fromRGB(220, 220, 220)
+    instance2.Font = Enum.Font.GothamBold
+    instance2.TextSize = 12
+    task.delay(
+        3,
+        function()
+            screenGui:Destroy()
+        end
+    )
+end
+local v2 = {Parts = {}, Active = false}
+local v3 = true
+local v4 = 16
+local v5 = 3
+local v6 = -3.1
+local v7 = false
+local function f2()
+    return v1.Spread
+end
+local v8 = true
+local v9 = false
+local v10 = "slider"
+local connect
+local function f3()
+    v8 = false
+    if connect then
+        connect:Disconnect()
+        connect = nil
+    end
+    connect =
+        runService.Stepped:Connect(
+        function()
+            local character2 = localPlayer.Character
+            if not character2 or v8 then
+                return
+            end
+            for key, value in pairs(character2:GetDescendants()) do
+                if value:IsA("BasePart") and value.CanCollide then
+                    value.CanCollide = false
+                end
+            end
+        end
+    )
+end
+local function f4()
+    v8 = true
+    if connect then
+        connect:Disconnect()
+        connect = nil
+    end
+    local character3 = localPlayer.Character
+    if character3 then
+        for key2, value2 in pairs(character3:GetDescendants()) do
+            if value2:IsA("BasePart") then
+                value2.CanCollide = true
+            end
+        end
+    end
+end
+local v11 = "self"
+local f5
+local function f6(p1)
+    if not v2.Active then
+        return
+    end
+    if not p1:IsA("BasePart") or p1.Anchored or p1:IsDescendantOf(character) then
+        return
+    elseif p1:FindFirstChild("VortexPhys") then
+        return
+    elseif #v2.Parts >= v1.MaxParts then
+        return
+    else
+        if p1.Size.Magnitude < 0.5 then
+            return
+        end
+        f5(
+            function()
+                Instance.new("BoolValue", p1).Name = "VortexPhys"
+                p1.CanCollide = false
+                p1.CanTouch = false
+                local vortexPhys = Instance.new("Attachment", p1)
+                vortexPhys.Name = "VortexPhys"
+                local vortexPhys2 = Instance.new("AlignPosition", p1)
+                vortexPhys2.Name = "VortexPhys"
+                vortexPhys2.MaxForce = 10000000000000000
+                vortexPhys2.MaxVelocity = math.huge
+                vortexPhys2.Responsiveness = v1.Responsiveness
+                vortexPhys2.Attachment0 = vortexPhys
+                local instance3 = Instance.new("Attachment", workspace.Terrain)
+                vortexPhys2.Attachment1 = instance3
+                table.insert(
+                    v2.Parts,
+                    {
+                        part = p1,
+                        ap = vortexPhys2,
+                        tAtt = instance3,
+                        offset = math.random(0, 360),
+                        vertical = #v2.Parts % 2 == 0,
+                        phase = math.random() * math.pi
+                    }
+                )
+            end
+        )
+        return
+    end
+end
+local function f7()
+    return character and character:FindFirstChild("HumanoidRootPart")
+end
+function f5(p2)
+end
+local v12
+local function f8()
+    if v12 then
+        v12:Destroy()
+        v12 = nil
+    end
+end
+local name
+local function f9()
+    if v11 == "nothing" then
+        return {}
+    end
+    if v11 == "self" then
+        local v13 = f7()
+        return v13 and {v13} or {}
+    end
+    if v11 == "player" and name then
+        local findFirstChild = players:FindFirstChild(name)
+        if findFirstChild and findFirstChild.Character then
+            local humanoidRootPart = findFirstChild.Character:FindFirstChild("HumanoidRootPart")
+            return humanoidRootPart and {humanoidRootPart} or {}
+        end
+        return {}
+    elseif v11 == "all" then
+        local v14 = {}
+        for index, value3 in ipairs(players:GetPlayers()) do
+            if value3.Character then
+                local humanoidRootPart2 = value3.Character:FindFirstChild("HumanoidRootPart")
+                if humanoidRootPart2 then
+                    table.insert(v14, humanoidRootPart2)
+                end
+            end
+        end
+        return v14
+    else
+        if v11 == "others" then
+            local v15 = {}
+            for index2, value4 in ipairs(players:GetPlayers()) do
+                if value4 ~= localPlayer and value4.Character then
+                    local humanoidRootPart3 = value4.Character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart3 then
+                        table.insert(v15, humanoidRootPart3)
+                    end
+                end
+            end
+            return v15
+        end
+        return {}
+    end
+end
+local connect2, connect3, connect4
+local function f10()
+    v7 = false
+    if connect2 then
+        connect2:Disconnect()
+        connect2 = nil
+    end
+    if connect3 then
+        connect3:Disconnect()
+        connect3 = nil
+    end
+    if connect4 then
+        connect4:Disconnect()
+        connect4 = nil
+    end
+    local character4 = localPlayer.Character
+    if character4 then
+        local humanoidRootPart4 = character4:FindFirstChild("HumanoidRootPart")
+        if humanoidRootPart4 then
+            local floatBV = humanoidRootPart4:FindFirstChild("_FloatBV")
+            if floatBV then
+                floatBV:Destroy()
+            end
+        end
+    end
+    f8()
+end
+local function f11()
+    f8()
+    local pubertsFloatArrows = Instance.new("ScreenGui")
+    pubertsFloatArrows.Name = "PubertsFloatArrows"
+    pubertsFloatArrows.ResetOnSpawn = false
+    pubertsFloatArrows.DisplayOrder = 10000
+    pcall(
+        function()
+            pubertsFloatArrows.Parent = coreGui
+        end
+    )
+    if not pubertsFloatArrows.Parent then
+        pubertsFloatArrows.Parent = localPlayer:WaitForChild("PlayerGui")
+    end
+    v12 = pubertsFloatArrows
+    local instance4 = Instance.new("Frame", pubertsFloatArrows)
+    instance4.Size = UDim2.new(0, 70, 0, 110)
+    instance4.Position = UDim2.new(1, -80, 0.5, -55)
+    instance4.BackgroundColor3 = Color3.fromRGB(14, 14, 14)
+    instance4.BorderSizePixel = 0
+    Instance.new("UICorner", instance4).CornerRadius = UDim.new(0, 10)
+    local instance5 = Instance.new("UIStroke", instance4)
+    instance5.Color = Color3.fromRGB(35, 35, 35)
+    instance5.Thickness = 1
+    local instance6 = Instance.new("TextLabel", instance4)
+    instance6.Size = UDim2.new(1, 0, 0, 16)
+    instance6.Position = UDim2.new(0, 0, 0, 47)
+    instance6.BackgroundTransparency = 1
+    instance6.TextColor3 = Color3.fromRGB(80, 80, 80)
+    instance6.Font = Enum.Font.Gotham
+    instance6.TextSize = 9
+    instance6.TextXAlignment = Enum.TextXAlignment.Center
+    instance6.Text = "step " .. tostring(v5)
+    local v16 = false
+    local v17 = false
+    local function f12(text2, p3)
+        local instance7 = Instance.new("TextButton", instance4)
+        instance7.Size = UDim2.new(0, 50, 0, 36)
+        instance7.Position = UDim2.new(0.5, -25, 0, p3)
+        instance7.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+        instance7.TextColor3 = Color3.fromRGB(200, 200, 200)
+        instance7.Text = text2
+        instance7.TextSize = 20
+        instance7.Font = Enum.Font.GothamBold
+        instance7.AutoButtonColor = false
+        Instance.new("UICorner", instance7).CornerRadius = UDim.new(0, 6)
+        Instance.new("UIStroke", instance7).Color = Color3.fromRGB(50, 50, 50)
+        return instance7
+    end
+    local v18 = f12("▲", 6)
+    local v19 = f12("▼", 68)
+    v18.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                v16 = true
+            end
+        end
+    )
+    v18.InputEnded:Connect(
+        function(input2)
+            if
+                input2.UserInputType == Enum.UserInputType.MouseButton1 or
+                    input2.UserInputType == Enum.UserInputType.Touch
+             then
+                v16 = false
+            end
+        end
+    )
+    v19.InputBegan:Connect(
+        function(input3)
+            if
+                input3.UserInputType == Enum.UserInputType.MouseButton1 or
+                    input3.UserInputType == Enum.UserInputType.Touch
+             then
+                v17 = true
+            end
+        end
+    )
+    v19.InputEnded:Connect(
+        function(input4)
+            if
+                input4.UserInputType == Enum.UserInputType.MouseButton1 or
+                    input4.UserInputType == Enum.UserInputType.Touch
+             then
+                v17 = false
+            end
+        end
+    )
+    task.spawn(
+        function()
+            while v12 and v12.Parent do
+                if v16 then
+                    v6 = v6 + v5
+                    instance6.Text = "step " .. tostring(v5)
+                elseif v17 then
+                    v6 = v6 - v5
+                    instance6.Text = "step " .. tostring(v5)
+                end
+                task.wait(0.1)
+            end
+        end
+    )
+end
+local function f13()
+    f10()
+    v7 = true
+    local character5 = localPlayer.Character
+    if not character5 then
+        return
+    else
+        local humanoidRootPart5 = character5:FindFirstChild("HumanoidRootPart")
+        if not humanoidRootPart5 then
+            return
+        else
+            local floatBV2 = Instance.new("BodyVelocity")
+            floatBV2.Name = "_FloatBV"
+            floatBV2.Velocity = Vector3.new(0, 0, 0)
+            floatBV2.MaxForce = Vector3.new(0, math.huge, 0)
+            floatBV2.Parent = humanoidRootPart5
+            connect4 =
+                userInputService.InputBegan:Connect(
+                function(input5, p4)
+                    if p4 then
+                        return
+                    end
+                    if input5.KeyCode == Enum.KeyCode.Q then
+                        v6 = v6 - v5
+                    elseif input5.KeyCode == Enum.KeyCode.E then
+                        v6 = v6 + v5
+                    end
+                end
+            )
+            local humanoid = character5:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                connect3 =
+                    humanoid.Died:Connect(
+                    function()
+                        v7 = true
+                    end
+                )
+            end
+            connect2 =
+                runService.Heartbeat:Connect(
+                function()
+                    if not v7 then
+                        return
+                    else
+                        local character6 = localPlayer.Character
+                        if not character6 then
+                            return
+                        else
+                            local humanoidRootPart6 = character6:FindFirstChild("HumanoidRootPart")
+                            if not humanoidRootPart6 then
+                                return
+                            else
+                                for index3, value5 in ipairs(v2.Parts) do
+                                    if value5.part and value5.part.Parent and value5.part.CanCollide then
+                                        value5.part.CanCollide = false
+                                    end
+                                end
+                                local floatBV3 = humanoidRootPart6:FindFirstChild("_FloatBV")
+                                if not floatBV3 then
+                                    floatBV3 = Instance.new("BodyVelocity")
+                                    floatBV3.Name = "_FloatBV"
+                                    floatBV3.MaxForce = Vector3.new(0, math.huge, 0)
+                                    floatBV3.Parent = humanoidRootPart6
+                                end
+                                local raycastParams = RaycastParams.new()
+                                raycastParams.FilterDescendantsInstances = {character6}
+                                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
+                                local raycast =
+                                    workspace:Raycast(
+                                    humanoidRootPart6.Position,
+                                    Vector3.new(0, -100, 0),
+                                    raycastParams
+                                )
+                                if raycast then
+                                    floatBV3.Velocity =
+                                        Vector3.new(
+                                        0,
+                                        math.clamp(
+                                            (raycast.Position.Y + 3.1 + (v6 + 3.1) - humanoidRootPart6.Position.Y) * 15,
+                                            -60,
+                                            60
+                                        ),
+                                        0
+                                    )
+                                else
+                                    floatBV3.Velocity = Vector3.new(0, 0, 0)
+                                end
+                                return
+                            end
+                        end
+                    end
+                end
+            )
+            f11()
+            return
+        end
+    end
+end
+local function f14()
+    v2.Active = false
+    v1.CurrentMode = "None"
+    task.spawn(
+        function()
+            for key3, value6 in pairs(workspace:GetDescendants()) do
+                local v20 = value6
+                if v20:IsA("BoolValue") and v20.Name == "VortexPhys" then
+                    f5(
+                        function()
+                            if v20.Parent then
+                                v20.Parent.CanCollide = true
+                                v20.Parent.CanTouch = true
+                            end
+                            v20:Destroy()
+                        end
+                    )
+                end
+            end
+        end
+    )
+end
+local v21 = {
+    ["Atom Shield"] = function(p5, p6, p7)
+        local v22 = 16 * f2()
+        local v23 = p6 * v1.RotationSpeed + p5.offset
+        if p5.vertical then
+            return p7.Position + Vector3.new(0, math.sin(v23) * v22, math.cos(v23) * v22)
+        end
+        return p7.Position + Vector3.new(math.cos(v23) * v22, v1.VerticalOffset, math.sin(v23) * v22)
+    end,
+    Tornado = function(p8, p9, p10)
+        local v24 = (p9 * v1.RotationSpeed * 0.5 + p8.offset * 0.4) % 50
+        local v25 = p9 * v1.RotationSpeed * 2 + p8.offset
+        return p10.Position +
+            Vector3.new(math.cos(v25) * (6 + v24 * 0.7) * f2(), v24 - 25, math.sin(v25) * (6 + v24 * 0.7) * f2())
+    end,
+    ["Black Hole"] = function(p11, p12, p13)
+        return (p13.CFrame * CFrame.new(0, 0, -12 * f2())).Position +
+            Vector3.new(math.cos(p12 * 10 + p11.phase) * 4 * f2(), math.sin(p12 * 10 + p11.phase) * 4, 0)
+    end,
+    ["Orbital Ring"] = function(p14, p15, p16)
+        local v26 = 22 * f2()
+        local v27 = p15 * v1.RotationSpeed * 1.5 + p14.offset
+        return p16.Position +
+            Vector3.new(math.cos(v27) * v26, math.sin(p15 * 2 + p14.phase) * 5 + v1.VerticalOffset, math.sin(v27) * v26)
+    end,
+    Helix = function(p17, p18, p19)
+        local v28 = (p18 * v1.RotationSpeed * 0.3 + p17.offset * 0.5) % 40 - 20
+        local v29 = p18 * v1.RotationSpeed * 2 + v28 * 0.3 + (p17.vertical and 1 or -1) * math.pi
+        return (p19.CFrame * CFrame.new(math.cos(v29) * 8 * f2(), v28, math.sin(v29) * 8 * f2())).Position
+    end,
+    ["Mini-Nado"] = function(p20, p21, p22)
+        local v30 = (p21 * v1.RotationSpeed + p20.offset * 0.2) % 60 - 30
+        local v31 = p21 * v1.RotationSpeed * 3 + p20.offset
+        return p22.Position +
+            Vector3.new(math.cos(v31) * (8 + v30 * 0.4) * f2(), v30, math.sin(v31) * (8 + v30 * 0.4) * f2())
+    end,
+    ["Shield Dome"] = function(p23, p24, p25)
+        local v32 = p24 * v1.RotationSpeed * 2 + p23.offset
+        return (p25.CFrame *
+            CFrame.new(math.cos(v32) * 12 * f2(), math.sin(p24 + p23.phase) * 8 + 10, math.sin(v32) * 12 * f2())).Position
+    end,
+    Freeze = function(p26, p27, p28)
+        if p26.frozenPos then
+            return p26.frozenPos
+        end
+        p26.frozenPos = p26.part and p26.part.Position or p28.Position
+        return p26.frozenPos
+    end,
+    ["Abduction Beam"] = function(p29, p30, p31)
+        return p31.Position +
+            Vector3.new(
+                math.cos(p30 * 5) * 8 * f2(),
+                (p30 + p29.offset * 0.1) % 4 * 15 + 15,
+                math.sin(p30 * 5) * 8 * f2()
+            )
+    end,
+    Pulsar = function(p32, p33, p34)
+        local v33 = (5 + math.abs(math.sin(p33 * v1.RotationSpeed * 2)) * 35) * f2()
+        return p34.Position + Vector3.new(math.cos(p32.offset) * v33, v1.VerticalOffset, math.sin(p32.offset) * v33)
+    end,
+    Inward = function(p35, p36, p37)
+        return (p37.Position + Vector3.new(math.cos(p35.offset) * 80 * f2(), 40, math.sin(p35.offset) * 80 * f2())):Lerp(
+            p37.Position,
+            (p36 * v1.RotationSpeed * 0.3 + p35.offset * 0.05) % 1
+        )
+    end,
+    Orbit = function(p38, p39, p40)
+        local v34 = math.max(#v2.Parts, 1)
+        local v35 = 0
+        for index4, value7 in ipairs(v2.Parts) do
+            if value7 == p38 then
+                v35 = index4
+                break
+            end
+        end
+        local v36 = p39 * (2 + v35 % 10 * 0.5) + v35 * (math.pi * 2 / v34)
+        local v37 = math.floor(p39) % 2 == 0
+        local v38 = v37 and v1.Spread * 10 or v1.Spread * 20
+        local verticalOffset = v37 and v1.VerticalOffset or v1.VerticalOffset + 3
+        return p40.Position + Vector3.new(math.cos(v36) * v38, verticalOffset, math.sin(v36) * v38)
+    end,
+    Vortex = function(p41, p42, p43)
+        local v39 = math.max(#v2.Parts, 1)
+        local v40 = 0
+        for index5, value8 in ipairs(v2.Parts) do
+            if value8 == p41 then
+                v40 = index5
+                break
+            end
+        end
+        local v41 = math.max(math.floor(v39 / 5), 5)
+        local v42 = math.floor((v40 - 1) / v41)
+        local v43 = (v42 + 1) * 8 * f2()
+        local v44 = p42 * v1.RotationSpeed * (1 + v42 * 0.3) + (v40 - 1) % v41 * (math.pi * 2 / v41)
+        return p43.Position + Vector3.new(math.cos(v44) * v43, v1.VerticalOffset + v42 * 4, math.sin(v44) * v43)
+    end,
+    Nothing = function(p44, p45, p46)
+        return p44.frozenPos or p44.part and p44.part.Position or p46.Position
+    end
+}
+local function f15(p47)
+    local v45 = f9()
+    if #v45 == 0 then
+        return nil
+    end
+    return v45[(p47 - 1) % #v45 + 1]
+end
+local function f16()
+    if not v2.Active then
+        return
+    else
+        local v46 = tick()
+        for i = #v2.Parts, 1, -1 do
+            local v47 = v2.Parts[i]
+            if v47.part and v47.part.Parent then
+                local v48 = v21[v1.CurrentMode]
+                if v48 then
+                    local v49 = f15(i)
+                    if v49 then
+                        local v50, v51 = pcall(v48, v47, v46, v49)
+                        if v50 and v51 then
+                            v47.tAtt.WorldPosition = v51
+                            if v1.CurrentMode ~= "Freeze" and v1.CurrentMode ~= "Nothing" then
+                                v47.part.Velocity = v1.OwnershipVelocity
+                            end
+                        end
+                    else
+                        if not v47.frozenPos then
+                            v47.frozenPos = v47.part.Position
+                        end
+                        v47.tAtt.WorldPosition = v47.frozenPos
+                    end
+                end
+            else
+                table.remove(v2.Parts, i)
+            end
+        end
+        return
+    end
+end
+runService.Stepped:Connect(
+    function()
+        v1485 = tick()
+    end
+)
+local v52 = 0
+runService.Heartbeat:Connect(
+    function()
+        if not v2.Active then
+            return
+        else
+            local v53 = f7()
+            if not v53 then
+                return
+            else
+                local v54 = tick()
+                if v54 - v52 > 0.2 then
+                    v52 = v54
+                    for key4, value9 in pairs((workspace:GetPartBoundsInRadius(v53.Position, v1.Radius + 50))) do
+                        f6(value9)
+                    end
+                end
+                f16()
+                return
+            end
+        end
+    end
+)
+players.PlayerRemoving:Connect(
+    function(player)
+        if v11 == "player" and name == player.Name then
+            v11 = "nothing"
+            name = nil
+            for index6, value10 in ipairs(v2.Parts) do
+                if value10.part and value10.part.Parent then
+                    value10.frozenPos = value10.part.Position
+                end
+            end
+            v1.CurrentMode = "Nothing"
+            v2.Active = true
+            f1(player.Name .. " left — parts frozen in place")
+        end
+    end
+)
+local f17, f18
+if not _G.PubertBrightInit then
+    _G.PubertBrightInit = true
+    _G.PubertBright = false
+    _G.PubertNormalLighting = {
+        Brightness = lighting.Brightness,
+        ClockTime = lighting.ClockTime,
+        FogEnd = lighting.FogEnd,
+        GlobalShadows = lighting.GlobalShadows,
+        Ambient = lighting.Ambient
+    }
+    function f17()
+        lighting.Brightness = 1
+        lighting.ClockTime = 12
+        lighting.FogEnd = 786543
+        lighting.GlobalShadows = false
+        lighting.Ambient = Color3.fromRGB(178, 178, 178)
+    end
+    function f18()
+        lighting.Brightness = _G.PubertNormalLighting.Brightness
+        lighting.ClockTime = _G.PubertNormalLighting.ClockTime
+        lighting.FogEnd = _G.PubertNormalLighting.FogEnd
+        lighting.GlobalShadows = _G.PubertNormalLighting.GlobalShadows
+        lighting.Ambient = _G.PubertNormalLighting.Ambient
+    end
+    lighting:GetPropertyChangedSignal("Brightness"):Connect(
+        function()
+            if _G.PubertBright and lighting.Brightness ~= 1 then
+                lighting.Brightness = 1
+            elseif not _G.PubertBright then
+                _G.PubertNormalLighting.Brightness = lighting.Brightness
+            end
+        end
+    )
+    lighting:GetPropertyChangedSignal("ClockTime"):Connect(
+        function()
+            if _G.PubertBright and lighting.ClockTime ~= 12 then
+                lighting.ClockTime = 12
+            elseif not _G.PubertBright then
+                _G.PubertNormalLighting.ClockTime = lighting.ClockTime
+            end
+        end
+    )
+    lighting:GetPropertyChangedSignal("FogEnd"):Connect(
+        function()
+            if _G.PubertBright and lighting.FogEnd ~= 786543 then
+                lighting.FogEnd = 786543
+            elseif not _G.PubertBright then
+                _G.PubertNormalLighting.FogEnd = lighting.FogEnd
+            end
+        end
+    )
+    lighting:GetPropertyChangedSignal("GlobalShadows"):Connect(
+        function()
+            if _G.PubertBright and lighting.GlobalShadows ~= false then
+                lighting.GlobalShadows = false
+            elseif not _G.PubertBright then
+                _G.PubertNormalLighting.GlobalShadows = lighting.GlobalShadows
+            end
+        end
+    )
+    lighting:GetPropertyChangedSignal("Ambient"):Connect(
+        function()
+            local color = Color3.fromRGB(178, 178, 178)
+            if _G.PubertBright and lighting.Ambient ~= color then
+                lighting.Ambient = color
+            elseif not _G.PubertBright then
+                _G.PubertNormalLighting.Ambient = lighting.Ambient
+            end
+        end
+    )
+    function _G.PubertToggleBright()
+        _G.PubertBright = not _G.PubertBright
+        if _G.PubertBright then
+            f17()
+        else
+            f18()
+        end
+    end
+end
+if not _G.PubertClickTpInit then
+    _G.PubertClickTpInit = true
+    _G.PubertClickTp = false
+end
+local pubertsFEParts = Instance.new("ScreenGui")
+pubertsFEParts.Name = "PubertsFEParts"
+pubertsFEParts.ResetOnSpawn = false
+pubertsFEParts.DisplayOrder = 9999
+pubertsFEParts.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+pcall(
+    function()
+        pubertsFEParts.Parent = coreGui
+    end
+)
+if not pubertsFEParts.Parent then
+    pubertsFEParts.Parent = localPlayer:WaitForChild("PlayerGui")
+end
+userInputService.InputBegan:Connect(
+    function(input6, p48)
+        if not _G.PubertClickTp then
+            return
+        end
+        if p48 then
+            return
+        end
+        if input6.UserInputType == Enum.UserInputType.Touch or input6.UserInputType == Enum.UserInputType.MouseButton1 then
+            local character7 = localPlayer.Character
+            if character7 then
+                local getMouse = localPlayer:GetMouse()
+                if getMouse.Target then
+                    character7:MoveTo(getMouse.Hit.Position)
+                end
+            end
+        end
+    end
+)
+local color2 = Color3.fromRGB(11, 11, 11)
+local color3 = Color3.fromRGB(15, 15, 15)
+local color4 = Color3.fromRGB(22, 22, 22)
+local color5 = Color3.fromRGB(200, 200, 200)
+local color6 = Color3.fromRGB(60, 60, 60)
+local color7 = Color3.fromRGB(32, 32, 32)
+local color8 = Color3.fromRGB(50, 205, 50)
+local color9 = Color3.fromRGB(30, 130, 62)
+local color10 = Color3.fromRGB(160, 40, 40)
+local color11 = Color3.fromRGB(0, 200, 150)
+local color12 = Color3.fromRGB(50, 175, 85)
+local color13 = Color3.fromRGB(38, 38, 38)
+local function f19(p49, p50)
+    Instance.new("UICorner", p49).CornerRadius = UDim.new(0, p50 or 6)
+end
+local function f20(p51, p52)
+    local instance8 = Instance.new("UIStroke", p51)
+    instance8.Color = p52 or color7
+    instance8.Thickness = 1
+end
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 220, 0.85, 0)
+frame.Position = UDim2.new(0, 8, 0.5, 0)
+frame.AnchorPoint = Vector2.new(0, 0.5)
+frame.BackgroundColor3 = color2
+frame.BorderSizePixel = 0
+frame.ClipsDescendants = true
+frame.Parent = pubertsFEParts
+f19(frame, 10)
+f20(frame, color7)
+local instance9 = Instance.new("Frame", frame)
+instance9.Size = UDim2.new(1, 0, 0, 34)
+instance9.BackgroundColor3 = color3
+instance9.BorderSizePixel = 0
+instance9.ZIndex = 5
+f19(instance9, 10)
+local instance10 = Instance.new("Frame", instance9)
+instance10.Size = UDim2.new(1, 0, 0.5, 0)
+instance10.Position = UDim2.new(0, 0, 0.5, 0)
+instance10.BackgroundColor3 = color3
+instance10.BorderSizePixel = 0
+instance10.ZIndex = 5
+local instance11 = Instance.new("Frame", instance9)
+instance11.Size = UDim2.new(0, 2, 0, 16)
+instance11.Position = UDim2.new(0, 9, 0.5, -8)
+instance11.BackgroundColor3 = color8
+instance11.BorderSizePixel = 0
+instance11.ZIndex = 6
+f19(instance11, 2)
+local instance12 = Instance.new("TextLabel", instance9)
+instance12.Size = UDim2.new(1, -70, 1, 0)
+instance12.Position = UDim2.new(0, 17, 0, 0)
+instance12.BackgroundTransparency = 1
+instance12.Text = "LEAKED BY 8KILOS"
+instance12.TextColor3 = color5
+instance12.Font = Enum.Font.GothamBold
+instance12.TextSize = 10
+instance12.TextXAlignment = Enum.TextXAlignment.Left
+instance12.ZIndex = 6
+local function f21(text3, p53)
+    local instance13 = Instance.new("TextButton", instance9)
+    instance13.Size = UDim2.new(0, 26, 0, 26)
+    instance13.Position = UDim2.new(1, p53, 0.5, -13)
+    instance13.BackgroundColor3 = Color3.fromRGB(32, 32, 32)
+    instance13.TextColor3 = Color3.fromRGB(160, 160, 160)
+    instance13.Text = text3
+    instance13.TextSize = 12
+    instance13.Font = Enum.Font.GothamBold
+    instance13.AutoButtonColor = false
+    instance13.ZIndex = 6
+    f19(instance13, 5)
+    f20(instance13, Color3.fromRGB(45, 45, 45))
+    return instance13
+end
+local v55 = f21("-", -58)
+local v56 = f21("X", -28)
+local v57, position, position2
+instance9.InputBegan:Connect(
+    function(input7)
+        if input7.UserInputType == Enum.UserInputType.MouseButton1 or input7.UserInputType == Enum.UserInputType.Touch then
+            v57 = true
+            position = input7.Position
+            position2 = frame.Position
+            input7.Changed:Connect(
+                function()
+                    if input7.UserInputState == Enum.UserInputState.End then
+                        v57 = false
+                    end
+                end
+            )
+        end
+    end
+)
+local v58
+instance9.InputChanged:Connect(
+    function(input8)
+        if input8.UserInputType == Enum.UserInputType.MouseMovement or input8.UserInputType == Enum.UserInputType.Touch then
+            v58 = input8
+        end
+    end
+)
+userInputService.InputChanged:Connect(
+    function(input9)
+        if input9 == v58 and v57 then
+            local v59 = input9.Position - position
+            frame.Position =
+                UDim2.new(position2.X.Scale, position2.X.Offset + v59.X, position2.Y.Scale, position2.Y.Offset + v59.Y)
+        end
+    end
+)
+local function f22(p54)
+    v3 = p54
+    if p54 then
+        frame.Size = UDim2.new(0, 220, 0.85, 0)
+        v55.Text = "-"
+    else
+        frame.Size = UDim2.new(0, 220, 0, 34)
+        v55.Text = "+"
+    end
+end
+v55.MouseButton1Click:Connect(
+    function()
+        f22(not v3)
+    end
+)
+v56.MouseButton1Click:Connect(
+    function()
+        f14()
+        f4()
+        f10()
+        pubertsFEParts:Destroy()
+    end
+)
+userInputService.InputBegan:Connect(
+    function(input10, p55)
+        if not p55 and input10.KeyCode == Enum.KeyCode.RightShift then
+            f22(not v3)
+        end
+    end
+)
+local instance14 = Instance.new("ScrollingFrame", frame)
+instance14.Size = UDim2.new(1, 0, 1, -34)
+instance14.Position = UDim2.new(0, 0, 0, 34)
+instance14.BackgroundTransparency = 1
+instance14.BorderSizePixel = 0
+instance14.ScrollBarThickness = 4
+instance14.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 60)
+instance14.CanvasSize = UDim2.new(0, 0, 0, 2000)
+local instance15 = Instance.new("Frame", instance14)
+instance15.Size = UDim2.new(1, 0, 0, 2000)
+instance15.BackgroundTransparency = 1
+local instance16 = Instance.new("UIListLayout", instance15)
+instance16.Padding = UDim.new(0, 5)
+instance16.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local instance17 = Instance.new("UIPadding", instance15)
+instance17.PaddingTop = UDim.new(0, 8)
+instance17.PaddingBottom = UDim.new(0, 8)
+instance17.PaddingLeft = UDim.new(0, 12)
+instance17.PaddingRight = UDim.new(0, 12)
+local function f23()
+    local v60 = instance16.AbsoluteContentSize.Y + 16
+    instance15.Size = UDim2.new(1, 0, 0, v60)
+    instance14.CanvasSize = UDim2.new(0, 0, 0, v60)
+end
+instance16:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(f23)
+local function f24(p56, p57, p58, p59, p60, p61, p62, p63, p64)
+    p56.Text = p58 and p63 or p64
+    p56.BackgroundColor3 = p58 and p59 or p60
+    p57.Color = p58 and p61 or p62
+end
+task.defer(
+    function()
+        task.wait(0.2)
+        f23()
+    end
+)
+local function f25(text4, p65, p66)
+    local instance18 = Instance.new("TextButton", instance15)
+    instance18.Size = UDim2.new(1, 0, 0, 28)
+    instance18.BackgroundColor3 = p65 or color4
+    instance18.TextColor3 = color5
+    instance18.Text = text4
+    instance18.TextSize = 11
+    instance18.Font = Enum.Font.GothamBold
+    instance18.AutoButtonColor = false
+    f19(instance18, 5)
+    local instance19 = Instance.new("UIStroke", instance18)
+    instance19.Color = p66 or color13
+    instance19.Thickness = 1
+    return instance18, instance19
+end
+local v61 = {}
+local function f26()
+    local instance20 = Instance.new("Frame", instance15)
+    instance20.Size = UDim2.new(1, 0, 0, 1)
+    instance20.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+    instance20.BorderSizePixel = 0
+end
+local function f27(p67)
+    v10 = p67
+    for index7, value11 in ipairs(v61) do
+        value11.slider.Visible = p67 == "slider"
+        value11.text.Visible = p67 == "text"
+    end
+end
+local function f28(text5, p68, p69, p70, fn)
+    local v62 = p70 > 0 and math.floor(p69 * p68 * 10 ^ p70 + 0.5) / 10 ^ p70 or math.floor(p69 * p68)
+    local instance21 = Instance.new("Frame", instance15)
+    instance21.Size = UDim2.new(1, 0, 0, 32)
+    instance21.BackgroundTransparency = 1
+    local instance22 = Instance.new("TextLabel", instance21)
+    instance22.Size = UDim2.new(0.65, 0, 0, 14)
+    instance22.BackgroundTransparency = 1
+    instance22.Text = text5
+    instance22.TextColor3 = Color3.fromRGB(110, 110, 110)
+    instance22.Font = Enum.Font.Gotham
+    instance22.TextSize = 10
+    instance22.TextXAlignment = Enum.TextXAlignment.Left
+    local instance23 = Instance.new("TextLabel", instance21)
+    instance23.Size = UDim2.new(0.35, 0, 0, 14)
+    instance23.Position = UDim2.new(0.65, 0, 0, 0)
+    instance23.BackgroundTransparency = 1
+    instance23.TextColor3 = Color3.fromRGB(55, 185, 90)
+    instance23.Font = Enum.Font.GothamBold
+    instance23.TextSize = 10
+    instance23.TextXAlignment = Enum.TextXAlignment.Right
+    instance23.Text = p70 > 0 and string.format("%." .. p70 .. "f", v62) or tostring(v62)
+    local instance24 = Instance.new("Frame", instance21)
+    instance24.Size = UDim2.new(1, 0, 0, 5)
+    instance24.Position = UDim2.new(0, 0, 0, 18)
+    instance24.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
+    instance24.BorderSizePixel = 0
+    f19(instance24, 3)
+    local instance25 = Instance.new("Frame", instance24)
+    instance25.Size = UDim2.new(p69, 0, 1, 0)
+    instance25.BackgroundColor3 = Color3.fromRGB(50, 180, 85)
+    instance25.BorderSizePixel = 0
+    f19(instance25, 3)
+    local instance26 = Instance.new("Frame", instance24)
+    instance26.Size = UDim2.new(0, 14, 0, 14)
+    instance26.Position = UDim2.new(p69, -7, 0.5, -7)
+    instance26.BackgroundColor3 = Color3.fromRGB(220, 220, 220)
+    instance26.BorderSizePixel = 0
+    f19(instance26, 99)
+    local instance27 = Instance.new("TextButton", instance24)
+    instance27.Size = UDim2.new(1, 0, 0, 26)
+    instance27.Position = UDim2.new(0, 0, 0.5, -13)
+    instance27.BackgroundTransparency = 1
+    instance27.Text = ""
+    local v63 = false
+    local function f29(p71)
+        local v64 = math.clamp((p71 - instance24.AbsolutePosition.X) / instance24.AbsoluteSize.X, 0, 1)
+        instance25.Size = UDim2.new(v64, 0, 1, 0)
+        instance26.Position = UDim2.new(v64, -7, 0.5, -7)
+        local v65 = v64 * p68
+        v62 =
+            p70 > 0 and math.max(math.floor(v65 * 10 ^ p70 + 0.5) / 10 ^ p70, 1 / 10 ^ p70) or
+            math.max(math.floor(v65), 1)
+        instance23.Text = p70 > 0 and string.format("%." .. p70 .. "f", v62) or tostring(v62)
+        fn(v62)
+    end
+    instance27.MouseButton1Down:Connect(
+        function(p72)
+            v63 = true
+            f29(p72)
+        end
+    )
+    userInputService.InputEnded:Connect(
+        function(input11)
+            if
+                input11.UserInputType == Enum.UserInputType.MouseButton1 or
+                    input11.UserInputType == Enum.UserInputType.Touch
+             then
+                v63 = false
+            end
+        end
+    )
+    userInputService.InputChanged:Connect(
+        function(input12)
+            if
+                v63 and
+                    (input12.UserInputType == Enum.UserInputType.MouseMovement or
+                        input12.UserInputType == Enum.UserInputType.Touch)
+             then
+                f29(input12.Position.X)
+            end
+        end
+    )
+    local instance28 = Instance.new("Frame", instance15)
+    instance28.Size = UDim2.new(1, 0, 0, 32)
+    instance28.BackgroundTransparency = 1
+    instance28.Visible = false
+    local instance29 = Instance.new("TextLabel", instance28)
+    instance29.Size = UDim2.new(0.55, 0, 0, 14)
+    instance29.BackgroundTransparency = 1
+    instance29.Text = text5
+    instance29.TextColor3 = Color3.fromRGB(110, 110, 110)
+    instance29.Font = Enum.Font.Gotham
+    instance29.TextSize = 10
+    instance29.TextXAlignment = Enum.TextXAlignment.Left
+    local instance30 = Instance.new("TextLabel", instance28)
+    instance30.Size = UDim2.new(0.45, 0, 0, 14)
+    instance30.Position = UDim2.new(0.55, 0, 0, 0)
+    instance30.BackgroundTransparency = 1
+    instance30.Text = "⚠ high = issues"
+    instance30.TextColor3 = Color3.fromRGB(180, 100, 30)
+    instance30.Font = Enum.Font.Gotham
+    instance30.TextSize = 9
+    instance30.TextXAlignment = Enum.TextXAlignment.Right
+    local instance31 = Instance.new("TextBox", instance28)
+    instance31.Size = UDim2.new(1, 0, 0, 18)
+    instance31.Position = UDim2.new(0, 0, 0, 14)
+    instance31.BackgroundColor3 = Color3.fromRGB(22, 22, 22)
+    instance31.TextColor3 = color5
+    instance31.PlaceholderText = tostring(v62)
+    instance31.Text = ""
+    instance31.Font = Enum.Font.GothamBold
+    instance31.TextSize = 11
+    instance31.ClearTextOnFocus = false
+    f19(instance31, 4)
+    instance31.FocusLost:Connect(
+        function()
+            local v66 = tonumber(instance31.Text)
+            if v66 then
+                v62 = v66
+                instance23.Text = tostring(v66)
+                instance31.PlaceholderText = tostring(v66)
+                instance31.Text = ""
+                fn(v66)
+            else
+                instance31.Text = ""
+            end
+        end
+    )
+    table.insert(
+        v61,
+        {
+            slider = instance21,
+            text = instance28,
+            getValue = function()
+                return v62
+            end,
+            setValue = function(p73)
+                v62 = p73
+                instance23.Text = p70 > 0 and string.format("%." .. p70 .. "f", p73) or tostring(p73)
+                instance31.PlaceholderText = tostring(p73)
+            end
+        }
+    )
+end
+local v67, v68
+local function f30(p74, currentMode)
+    local v69, v70 = f25(p74)
+    v69.MouseButton1Click:Connect(
+        function()
+            if v67 then
+                v67.BackgroundColor3 = color4
+                v68.Color = color13
+            end
+            v2.Active = true
+            v1.CurrentMode = currentMode
+            v67 = v69
+            v68 = v70
+            v69.BackgroundColor3 = Color3.fromRGB(0, 150, 90)
+            v70.Color = color11
+        end
+    )
+    return v69, v70
+end
+local v71, v72 = f25("Input: Slider Mode")
+v71.MouseButton1Click:Connect(
+    function()
+        if v10 == "slider" then
+            f27("text")
+            v71.Text = "Input: Text Mode"
+            v71.BackgroundColor3 = Color3.fromRGB(40, 20, 80)
+            v72.Color = Color3.fromRGB(120, 60, 200)
+        else
+            f27("slider")
+            v71.Text = "Input: Slider Mode"
+            v71.BackgroundColor3 = color4
+            v72.Color = color13
+        end
+    end
+)
+f26()
+f30("Atom Shield", "Atom Shield")
+f30("Tornado", "Tornado")
+f30("Black Hole", "Black Hole")
+f30("Orbital Ring", "Orbital Ring")
+f30("Helix", "Helix")
+f30("Mini-Nado", "Mini-Nado")
+f30("Shield Dome", "Shield Dome")
+f30("Freeze", "Freeze")
+f30("Abduction Beam", "Abduction Beam")
+f30("Pulsar", "Pulsar")
+f30("Inward", "Inward")
+f30("Orbit", "Orbit")
+f30("Vortex", "Vortex")
+f30("Nothing", "Nothing")
+f26()
+f25("STOP", color10, color10).MouseButton1Click:Connect(
+    function()
+        f14()
+        if v67 then
+            v67.BackgroundColor3 = color4
+            v68.Color = color13
+            v67 = nil
+            v68 = nil
+        end
+    end
+)
+f26()
+local instance32 = Instance.new("TextLabel", instance15)
+instance32.Size = UDim2.new(1, 0, 0, 14)
+instance32.BackgroundTransparency = 1
+instance32.Text = "TRANSFER PARTS TO"
+instance32.TextColor3 = color6
+instance32.Font = Enum.Font.GothamBold
+instance32.TextSize = 9
+instance32.TextXAlignment = Enum.TextXAlignment.Left
+local v73, v74 = f25("Target: Self")
+local v75, v76 = f25("Target: Nothing")
+local v77, v78 = f25("Target: All Players")
+local v79, v80 = f25("Target: Others")
+local v81, v82 = f25("Target: Pick Player ▾")
+local function f31()
+    v73.BackgroundColor3 = v11 == "self" and Color3.fromRGB(0, 100, 60) or color4
+    v74.Color = v11 == "self" and color12 or color13
+    v75.BackgroundColor3 = v11 == "nothing" and Color3.fromRGB(0, 100, 60) or color4
+    v76.Color = v11 == "nothing" and color12 or color13
+    v77.BackgroundColor3 = v11 == "all" and Color3.fromRGB(0, 100, 60) or color4
+    v78.Color = v11 == "all" and color12 or color13
+    v79.BackgroundColor3 = v11 == "others" and Color3.fromRGB(0, 100, 60) or color4
+    v80.Color = v11 == "others" and color12 or color13
+    v81.BackgroundColor3 = v11 == "player" and Color3.fromRGB(0, 100, 60) or color4
+    v82.Color = v11 == "player" and color12 or color13
+end
+v73.MouseButton1Click:Connect(
+    function()
+        v11 = "self"
+        name = nil
+        f31()
+    end
+)
+v75.MouseButton1Click:Connect(
+    function()
+        v11 = "nothing"
+        name = nil
+        v1.CurrentMode = "Nothing"
+        v2.Active = true
+        f31()
+        f1("Orbit set to Nothing mode")
+    end
+)
+v77.MouseButton1Click:Connect(
+    function()
+        v11 = "all"
+        name = nil
+        f31()
+        f1("Parts shared among all players")
+    end
+)
+v79.MouseButton1Click:Connect(
+    function()
+        v11 = "others"
+        name = nil
+        f31()
+        f1("Parts orbiting all other players")
+    end
+)
+local instance33 = Instance.new("Frame", instance15)
+instance33.Size = UDim2.new(1, 0, 0, 0)
+instance33.BackgroundTransparency = 1
+instance33.Visible = false
+local instance34 = Instance.new("UIListLayout", instance33)
+instance34.Padding = UDim.new(0, 3)
+instance34.HorizontalAlignment = Enum.HorizontalAlignment.Center
+local v83 = false
+local function f32()
+    for index8, value12 in ipairs(instance33:GetChildren()) do
+        if value12:IsA("TextButton") then
+            value12:Destroy()
+        end
+    end
+    for index9, value13 in ipairs(players:GetPlayers()) do
+        local v84 = value13
+        if v84 ~= localPlayer then
+            local instance35 = Instance.new("TextButton", instance33)
+            instance35.Size = UDim2.new(1, 0, 0, 24)
+            instance35.BackgroundColor3 = Color3.fromRGB(28, 28, 28)
+            instance35.TextColor3 = color5
+            instance35.Text = v84.DisplayName .. " (@" .. v84.Name .. ")"
+            instance35.Font = Enum.Font.Gotham
+            instance35.TextSize = 10
+            instance35.AutoButtonColor = false
+            f19(instance35, 4)
+            instance35.MouseButton1Click:Connect(
+                function()
+                    v11 = "player"
+                    name = v84.Name
+                    v81.Text = "Target: " .. v84.DisplayName .. " ▾"
+                    v83 = false
+                    instance33.Visible = false
+                    instance33.Size = UDim2.new(1, 0, 0, 0)
+                    f31()
+                    f1("Parts orbiting " .. v84.DisplayName)
+                end
+            )
+        end
+    end
+    instance33.Size = UDim2.new(1, 0, 0, instance34.AbsoluteContentSize.Y)
+end
+v81.MouseButton1Click:Connect(
+    function()
+        v83 = not v83
+        if v83 then
+            f32()
+            instance33.Visible = true
+        else
+            instance33.Visible = false
+            instance33.Size = UDim2.new(1, 0, 0, 0)
+        end
+    end
+)
+f31()
+f26()
+local v85 = {
+    {label = "Less (50)", val = 50},
+    {label = "Optimal (200)", val = 200},
+    {label = "All (9999)", val = 9999}
+}
+local v86 = 2
+v1.MaxParts = 200
+local v87, v88 = f25("Parts: Optimal (200)")
+v87.MouseButton1Click:Connect(
+    function()
+        v86 = v86 % #v85 + 1
+        local v89 = v85[v86]
+        v1.MaxParts = v89.val
+        if v89.val == 9999 then
+            v87.BackgroundColor3 = Color3.fromRGB(140, 80, 20)
+            v88.Color = Color3.fromRGB(200, 120, 30)
+            v87.Text = "Parts: All ⚠ LAGGY"
+        else
+            v87.BackgroundColor3 = color4
+            v88.Color = color13
+            v87.Text = "Parts: " .. v89.label
+        end
+    end
+)
+f28(
+    "Attraction Range",
+    500,
+    v1.Radius / 500,
+    0,
+    function(p75)
+        v1.Radius = p75
+        for j = #v2.Parts, 1, -1 do
+            local v90 = v2.Parts[j]
+            if v90.part and v90.part.Parent then
+                local v91 = f7()
+                if v91 and (v90.part.Position - v91.Position).Magnitude > p75 + 50 then
+                    f5(
+                        function()
+                            v90.part.CanCollide = true
+                            v90.part.CanTouch = true
+                        end
+                    )
+                    table.remove(v2.Parts, j)
+                end
+            end
+        end
+    end
+)
+f28(
+    "Speed",
+    15,
+    v1.RotationSpeed / 15,
+    0,
+    function(rotationSpeed)
+        v1.RotationSpeed = rotationSpeed
+    end
+)
+f28(
+    "Spread",
+    5,
+    v1.Spread / 5,
+    1,
+    function(spread)
+        v1.Spread = spread
+    end
+)
+f28(
+    "Vertical Offset",
+    50,
+    0.5,
+    0,
+    function(p76)
+        v1.VerticalOffset = p76 - 25
+    end
+)
+f28(
+    "Responsiveness",
+    1000,
+    v1.Responsiveness / 1000,
+    0,
+    function(responsiveness)
+        v1.Responsiveness = responsiveness
+        for index10, value14 in ipairs(v2.Parts) do
+            if value14.ap and value14.ap.Parent then
+                value14.ap.Responsiveness = responsiveness
+            end
+        end
+    end
+)
+f26()
+local v92, v93 = f25("Noclip: OFF")
+v92.MouseButton1Click:Connect(
+    function()
+        v9 = not v9
+        if v9 then
+            f3()
+        else
+            f4()
+        end
+        f24(v92, v93, v9, color9, color4, color12, color13, "Noclip: ON", "Noclip: OFF")
+    end
+)
+local v94, v95 = f25("Float: OFF")
+v94.MouseButton1Click:Connect(
+    function()
+        v7 = not v7
+        if v7 then
+            f13()
+        else
+            f10()
+        end
+        f24(v94, v95, v7, color9, color4, color12, color13, "Float: ON (Q↓ E↑)", "Float: OFF")
+    end
+)
+f28(
+    "Q/E Step",
+    10,
+    v5 / 10,
+    0,
+    function(p77)
+        v5 = p77
+    end
+)
+f28(
+    "Walk Speed",
+    100,
+    v4 / 100,
+    0,
+    function(p78)
+        v4 = p78
+        local character8 = localPlayer.Character
+        if character8 then
+            local humanoid2 = character8:FindFirstChildOfClass("Humanoid")
+            if humanoid2 then
+                humanoid2.WalkSpeed = p78
+            end
+        end
+    end
+)
+f26()
+local v96, v97 = f25("Fullbright: OFF")
+v96.MouseButton1Click:Connect(
+    function()
+        _G.PubertToggleBright()
+        f24(v96, v97, _G.PubertBright, color9, color4, color12, color13, "Fullbright: ON", "Fullbright: OFF")
+    end
+)
+local v98, v99 = f25("Touch TP: OFF")
+v98.MouseButton1Click:Connect(
+    function()
+        _G.PubertClickTp = not _G.PubertClickTp
+        f24(v98, v99, _G.PubertClickTp, color9, color4, color12, color13, "Touch TP: ON", "Touch TP: OFF")
+    end
+)
+local instance36 = Instance.new("TextLabel", instance15)
+instance36.Size = UDim2.new(1, 0, 0, 12)
+instance36.BackgroundTransparency = 1
+instance36.Text = "Tap anywhere to teleport"
+instance36.TextColor3 = color6
+instance36.Font = Enum.Font.Gotham
+instance36.TextSize = 9
+instance36.TextXAlignment = Enum.TextXAlignment.Center
+localPlayer.CharacterAdded:Connect(
+    function(character9)
+        character = character9
+        character9:WaitForChild("HumanoidRootPart")
+        character9:WaitForChild("Humanoid")
+        f14()
+        task.wait(0.5)
+        local humanoid3 = character9:FindFirstChildOfClass("Humanoid")
+        if humanoid3 then
+            humanoid3.WalkSpeed = v4
+        end
+        if v9 then
+            f3()
+        end
+        if v7 then
+            f10()
+            v7 = false
+            v6 = -3.1
+            f24(v94, v95, false, color9, color4, color12, color13, "Float: ON (Q↓ E↑)", "Float: OFF")
+        end
+    end
+)
